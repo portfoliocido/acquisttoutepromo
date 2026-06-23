@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suivi de maîtrise — acquis d'apprentissage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F6F3; --card:#FFFFFF; --ink:#23211E; --muted:#6F6D64; --faint:#9A988E;
+    --line:#E2E3DC; --line-strong:#CFD0C8;
+    --serif:"Spectral",Georgia,serif; --sans:"Inter",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --strong:#4E8C6A; --tint:#E7F0EA;
+    --radius:14px; --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;padding:clamp(18px,4vw,44px);}
+  .wrap{max-width:960px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin:0 0 10px;}
+  h1.main{font-family:var(--serif);font-weight:700;font-size:clamp(27px,4.4vw,42px);line-height:1.06;letter-spacing:-.01em;margin:0 0 10px;}
+  h1.main em{font-style:italic;color:var(--strong);transition:color .5s var(--ease);}
+  .lede{font-size:clamp(15px,1.5vw,17px);color:var(--muted);max-width:64ch;margin:0 0 8px;}
+
+  section.step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(16px,2.4vw,26px);margin:18px 0;}
+  .step-no{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--strong);transition:color .5s var(--ease);margin:0 0 4px;}
+  .step h2{font-family:var(--serif);font-weight:600;font-size:clamp(18px,2.2vw,23px);margin:0 0 4px;letter-spacing:-.005em;}
+  .step .help{font-size:13.5px;color:var(--muted);margin:0 0 16px;max-width:64ch;}
+
+  .idrow{display:flex;flex-wrap:wrap;gap:14px;}
+  .fld{display:flex;flex-direction:column;gap:6px;}
+  .fld label{font-size:12px;color:var(--muted);}
+  .fld input{font-family:var(--sans);font-size:14px;padding:9px 12px;border:1px solid var(--line-strong);border-radius:9px;background:#FCFCFB;color:var(--ink);}
+  .fld input:focus{outline:none;border-color:var(--strong);box-shadow:0 0 0 3px var(--tint);}
+
+  .chips{display:flex;flex-wrap:wrap;gap:10px;}
+  .chip{border:1px solid var(--line-strong);background:#FBFBF9;border-radius:12px;padding:9px 16px;font-size:14px;color:var(--ink);cursor:pointer;font-family:var(--sans);transition:all .18s var(--ease);display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
+  .chip:hover{border-color:var(--strong);}
+  .chip:focus-visible{outline:2px solid var(--strong);outline-offset:2px;}
+  .chip.on{background:var(--tint);border-color:var(--strong);box-shadow:inset 0 0 0 1px var(--strong);}
+  .chip .c-code{font-family:var(--mono);font-size:11px;color:var(--faint);} .chip.on .c-code{color:var(--strong);}
+  .chip .c-name{font-size:14px;} .chip .c-meta{font-size:11px;color:var(--faint);font-style:italic;}
+
+  .scalekey{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:0 0 6px;}
+  .keycard{border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:#FCFCFB;}
+  .keycard .kl{font-family:var(--mono);font-size:11px;color:var(--strong);}
+  .keycard .kn{font-weight:600;font-size:13.5px;margin:2px 0 3px;}
+  .keycard .kd{font-size:12px;color:var(--muted);}
+
+  .bloc-group{margin:18px 0 0;}
+  .bloc-head{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid var(--tint);padding-bottom:6px;margin-bottom:4px;transition:border-color .5s var(--ease);}
+  .bloc-head .bn{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:#fff;background:var(--bcol);border-radius:6px;padding:2px 8px;}
+  .bloc-head .bt{font-size:13px;color:var(--muted);font-style:italic;}
+  .acq{padding:13px 0;border-bottom:1px solid var(--line);}
+  .acq:last-child{border-bottom:0;}
+  .acq-txt{font-size:14px;margin:0 0 10px;}
+  .acq-tags{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-bottom:8px;}
+  .scale{display:flex;gap:7px;flex-wrap:wrap;}
+  .seg{min-width:38px;height:34px;padding:0 10px;border:1.5px solid var(--line-strong);background:#FBFBF9;border-radius:8px;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--faint);transition:all .16s var(--ease);}
+  .seg:hover{border-color:var(--bcol);}
+  .seg:focus-visible{outline:2px solid var(--bcol);outline-offset:2px;}
+  .seg.on{background:var(--bcol);border-color:var(--bcol);color:#fff;}
+  .seg-label{font-size:12px;color:var(--muted);font-family:var(--mono);margin-top:6px;min-height:1.1em;}
+  .seg-label .lv{color:var(--bcol);}
+
+  .gate{color:var(--faint);font-size:13.5px;font-style:italic;padding:8px 0;}
+  .muted-note{font-size:13px;color:var(--muted);background:var(--tint);border-radius:10px;padding:12px 15px;margin:14px 0 0;transition:background .5s var(--ease);}
+  .muted-note b{color:var(--ink);}
+
+  /* chart */
+  .chartwrap{overflow-x:auto;}
+  svg.chart{display:block;width:100%;min-width:520px;height:auto;font-family:var(--sans);}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;}
+  .legend span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);}
+  .legend i{width:14px;height:4px;border-radius:2px;display:inline-block;}
+
+  .entries{margin-top:14px;display:flex;flex-direction:column;gap:8px;}
+  .entry{display:flex;align-items:center;gap:12px;font-size:13px;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#FCFCFB;}
+  .entry .ed{font-family:var(--mono);color:var(--ink);} .entry .ec{color:var(--muted);flex:1;}
+  .entry button{border:0;background:none;color:var(--faint);cursor:pointer;font-size:12px;text-decoration:underline;}
+  .entry button:hover{color:#9C4F2E;}
+
+  .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;}
+  .btn{font-family:var(--sans);font-size:14px;font-weight:500;border-radius:10px;padding:11px 18px;cursor:pointer;border:1.5px solid var(--strong);transition:all .18s var(--ease);}
+  .btn.primary{background:var(--strong);color:#fff;} .btn.primary:hover{filter:brightness(1.06);}
+  .btn.ghost{background:transparent;color:var(--strong);} .btn.ghost:hover{background:var(--tint);}
+  .btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+  .filehint{font-size:12px;color:var(--faint);margin-top:8px;}
+
+  .closing{background:var(--tint);border-left:5px solid var(--strong);border-radius:0 var(--radius) var(--radius) 0;padding:16px 20px;margin:20px 0;font-size:13.5px;color:var(--ink);transition:background .5s var(--ease),border-color .5s var(--ease);}
+
+  /* print */
+  #printView{display:none;}
+  @media print{
+    body{padding:0;background:#fff;}
+    #app{display:none;} #printView{display:block;}
+    .pv-band{border-left:6px solid var(--strong);background:var(--tint);padding:14px 18px;margin-bottom:18px;}
+    .pv-band h1{font-family:var(--serif);font-size:22px;margin:0 0 4px;color:#1a1a1a;}
+    .pv-band .pv-meta{font-size:12px;color:#555;}
+    .pv-bloc{font-family:var(--mono);font-size:11px;color:#fff;border-radius:5px;padding:2px 8px;display:inline-block;margin:14px 0 6px;}
+    .pv-acq{font-size:12.5px;padding:6px 0;border-bottom:1px dotted #ddd;}
+    .pv-acq .pv-lvl{font-family:var(--mono);font-size:11px;color:#333;}
+    .pv-bar{height:8px;background:#eee;border-radius:5px;margin-top:4px;overflow:hidden;}
+    .pv-fill{height:100%;border-radius:5px;}
+    .pv-foot{margin-top:18px;font-size:10.5px;color:#888;}
+  }
+  @media (max-width:600px){ .scale{gap:5px;} .seg{min-width:34px;padding:0 7px;} }
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+
+  <header>
+    <p class="eyebrow">Portfolio CIDO · suivi de compétences</p>
+    <h1 class="main">Où en es-tu de tes <em>acquis d'apprentissage</em> ?</h1>
+    <p class="lede">Positionne-toi sur les acquis de ton année, à différents moments. En important ton fichier de suivi à chaque fois, tu verras ta courbe de progression se construire — et tu pourras imprimer un relevé daté.</p>
+  </header>
+
+  <!-- identity -->
+  <section class="step">
+    <p class="step-no">Mon relevé</p>
+    <h2>Date &amp; identité</h2>
+    <div class="idrow">
+      <div class="fld"><label for="student">Mon nom (optionnel)</label><input id="student" type="text" placeholder="Prénom Nom"></div>
+      <div class="fld"><label for="date">Date du relevé</label><input id="date" type="date"></div>
+    </div>
+  </section>
+
+  <!-- promo -->
+  <section class="step">
+    <p class="step-no">Étape 1</p>
+    <h2>Ma promotion</h2>
+    <p class="help">Elle détermine les acquis d'apprentissage sur lesquels tu te positionnes.</p>
+    <div class="chips" id="promoChips"></div>
+  </section>
+
+  <!-- scale -->
+  <section class="step">
+    <p class="step-no">L'échelle de maîtrise</p>
+    <h2>Quatre niveaux — autonomie &amp; transfert</h2>
+    <p class="help">Cette échelle ne mesure pas la profondeur d'une réflexion, mais ta capacité à <b>agir</b>. Positionne-toi avec honnêteté : en début d'année, « Découverte » est tout à fait normal.</p>
+    <div class="scalekey" id="scaleKey"></div>
+  </section>
+
+  <!-- positioning -->
+  <section class="step">
+    <p class="step-no">Étape 2</p>
+    <h2>Mon positionnement, acquis par acquis</h2>
+    <div id="acqBox"><p class="gate">Choisis d'abord ta promotion pour faire apparaître tes acquis.</p></div>
+  </section>
+
+  <!-- evolution -->
+  <section class="step">
+    <p class="step-no">Étape 3</p>
+    <h2>Ma courbe d'évolution</h2>
+    <p class="help">La progression moyenne par bloc, d'un relevé à l'autre. Il te faut au moins deux relevés à des dates différentes pour la voir apparaître.</p>
+    <div class="actions" style="margin-bottom:14px;">
+      <button class="btn primary" id="addBtn" type="button">Ajouter ce relevé à mon suivi</button>
+      <button class="btn ghost" id="importBtn" type="button">Importer mon fichier de suivi</button>
+      <button class="btn ghost" id="exportBtn" type="button">Exporter mon suivi</button>
+      <input id="fileInput" type="file" accept="application/json,.json" style="display:none">
+    </div>
+    <p class="filehint">Ton suivi est un simple fichier que tu ranges dans ton <b>Atelier de production</b> et que tu réimportes à chaque visite. Rien n'est envoyé en ligne.</p>
+    <div id="entriesBox"></div>
+    <div id="chartBox" style="margin-top:16px;"><p class="gate">Ta courbe apparaîtra ici.</p></div>
+  </section>
+
+  <div class="closing">
+    Ce suivi est un <b>miroir de ta progression</b>, pas une note. Range ton fichier dans ton <b>Atelier</b> ; dépose le relevé imprimé (PDF) dans ta <b>Vitrine</b> si tu veux l'exposer. Tu pourras expliciter à l'oral en quoi ton positionnement reflète tes acquis.
+  </div>
+  <div class="actions">
+    <button class="btn primary" id="printBtn" type="button">Imprimer / enregistrer ce relevé en PDF</button>
+    <button class="btn ghost" id="resetBtn" type="button">Réinitialiser le formulaire</button>
+  </div>
+
+</div>
+<div id="printView" aria-hidden="true"></div>
+
+<script>
+const ACQUIS = {"A1": [{"blocs": [1, 2], "txt": "Lors des phases d'apprentissage et des situations cliniques simulées, l'apprenant applique une gestuelle adaptée aux approches manuelles (tests, mobilisation, manipulation) et reproduit les techniques acquises en étant capable d'en identifier les principes d'exécution."}, {"blocs": [1, 5], "txt": "À partir des situations observées en formation pratique clinique, des échanges en cours de concepts, des travaux réalisés en méthodologie et communication, des débats occasionnés avec les formateurs et ses pairs, l'apprenant décrit les principales caractéristiques de la profession ostéopathique, les enjeux de son exercice dans le système de santé identifiant ainsi les éléments constitutifs d'une identité professionnelle en construction."}, {"blocs": [2, 5], "txt": "Lors des évaluations écrites de connaissances et des travaux de groupe, l'apprenant décrit les éléments théoriques acquis dans les matières fondamentales (anatomie, physiologie, biologie, embryologie, concepts ostéopathiques) et en explique les articulations réciproques."}, {"blocs": [2], "txt": "Lors des évaluations écrites de connaissances et des échanges avec l’ensemble de la promotion et les formateurs, l'apprenant identifie les interactions entre les différents systèmes du corps humain / concepts et est capable de comprendre de manière intégrée les éléments qui les constituent."}, {"blocs": [3, 4], "txt": "Dans les activités de groupe et les projets à mener en collaboration avec ses pairs, l'apprenant coopère avec ses collègues, adapte sa contribution aux exigences du travail collaboratif et par la pratique ostéopathique identifie le toucher comme une modalité de communication à part entière dans la relation de soin."}, {"blocs": [4], "txt": "Lors des activités réalisées en session de cours sur la perception, et en lien avec l'abord introductif de la corporalité, l'apprenant discerne des sensations palpatoires en fonction de la méthode pratiquée et des comportements mécaniques des tissus, identifie sa propre perception lors de ces actions et reconnaît la nécessité de prendre en compte celle du patient."}, {"blocs": [4, 5], "txt": "Via le portfolio, les situations simulées rencontrées et authentiques observées, les débats d'idée en session de cours, l'apprenant identifie les représentations et réactions émotionnelles suscitées par ses premières expériences cliniques et les met en lien avec sa compréhension de la relation de soin, en s'appuyant sur une démarche réflexive s'initiant."}, {"blocs": [5], "txt": "A l'issue de cette première année, par l’évolution de ses méthodes d’apprentissage, l'apprenant identifie les ajustements à opérer dans ses méthodes de travail et formule, via le portfolio et les auto-évaluations qu'il complète après les évaluations de pratique ostéopathique, les axes d'évolution qu'il se fixe pour la suite de sa formation."}], "A2": [{"blocs": [1, 2], "txt": "Lors les phases d'apprentissage et les situations cliniques simulées, l'apprenant réalise les gestes et les approches manuelles (tests, mobilisation, manipulation) avec fluidité et les adapte aux exigences de chaque situation en démontrant leur appropriation."}, {"blocs": [1, 5], "txt": "À partir des stages d'observation et des échanges avec formateurs et pairs, l'apprenant se projette dans une posture professionnelle en identifiant les composantes de l'identité ostéopathique qu'il est en train de construire, en vue de la prise en charge de patients en A3."}, {"blocs": [2, 5], "txt": "Lors des évaluations écrites, travaux de groupe et exercices qu'il résout, l'apprenant analyse les éléments théoriques acquis dans les matières fondamentales, de raisonnement clinique et dans les UE de pratique ostéopathique en les articulant de manière argumentée."}, {"blocs": [2, 4], "txt": "Lors des activités pratiques en session de cours, l'apprenant utilise sa gestuelle comme outil au service de son toucher, confronte sa perception palpatoire à celle de ses pairs et en tire des éléments pertinents pour affiner son approche manuelle."}, {"blocs": [2], "txt": "Lors des évaluations de connaissances écrites, des interactions avec ses pairs et des situations cliniques authentiques observées ou simulées, de l'apprentissage de la construction d'un entretien structuré, en s'appuyant sur les premiers apports de la sémiologie, l'apprenant distingue le physiologique du pathologique et mobilise une première démarche de raisonnement clinique pour en rendre compte."}, {"blocs": [3], "txt": "Dans les situations pratiques, les situations cliniques simulées, les activités de groupe et projets à mener, les débats d'idées avec les formateurs et ses pairs, les situations d'observation en FPC, l'apprenant expose ses représentations, adopte une posture de collaboration avec ses pairs et identifie la communication comme dimension constitutive de l'alliance thérapeutique, en appréhendant la place qu'elle occupe dans la relation de soin."}, {"blocs": [4], "txt": "Via le portfolio et la démarche réflexive menée tout au long de l'année, reconnait l'évolution de sa posture d'apprenant, formule ses questionnements sur la profession et identifie les dimensions émotionnelles et relationnelles à intégrer dans la perspective de la prise en charge de patients en A3."}, {"blocs": [5], "txt": "À partir des situations authentiques observées et de ses interactions avec formateurs et pairs, l'apprenant évalue son propre niveau de maîtrise au regard des exigences de la profession et manifeste un esprit critique vis-à-vis des enseignements reçus comme de ses propres pratiques, en ajustant ses stratégies d'apprentissage en conséquence."}, {"blocs": [5], "txt": "Via le portfolio et la démarche réflexive menée tout au long de l'année, il reconnait l'évolution de sa posture d'apprenant, formule ses questionnements sur la profession et identifie les dimensions émotionnelles et relationnelles à intégrer dans la perspective de la prise en charge de patients en A3."}], "A3": [{"blocs": [1], "txt": "En formation pratique clinique et dans les travaux dirigés de pratique et d'examen clinique, l'apprenant applique les gestes professionnels attendus et les protocoles acquis, assure la traçabilité des actes réalisés et les adapte aux premières situations authentiques de consultation qu'il rencontre."}, {"blocs": [1, 2], "txt": "À partir des situations cliniques authentiques rencontrées et des données acquises en cours, l'apprenant modélise des scénari thérapeutiques adaptés au contexte du patient, anticipe les parcours de soin possibles et construit une représentation structurante de son futur exercice professionnel."}, {"blocs": [2, 5], "txt": "Au travers des consultations observées et réalisées, des enseignements basés sur la prise en charge du patient, l'apprenant analyse les données issues de l'anamnèse et des examens cliniques, les met en relation pour élaborer des hypothèses et les confronte à son raisonnement clinique dans une dynamique d'ajustement et de progression."}, {"blocs": [2, 4], "txt": "En situation de consultation clinique, l'apprenant mobilise ses connaissances en sémiologie et en physiopathologie pour construire une démarche diagnostique cohérente, en articulant raisonnement hypothético-déductif et raisonnement intuitif (dual process), et en intégrant les données perceptives et émotionnelles comme ressources inhérentes du raisonnement clinique."}, {"blocs": [2, 3, 4], "txt": "Dès les premiers instants de la rencontre avec le patient, l'apprenant l'observe, perçoit les signaux corporels pertinents et intègre sa propre perception et celle du patient dans une approche globale, faisant de lui un praticien receptif et du toucher, un outil de lecture clinique en situation authentique."}, {"blocs": [3], "txt": "En consultation clinique et dans les travaux collaboratifs avec le formateur et / ou ses pairs, l'apprenant écoute le patient, accueille sa parole et ajuste son langage et sa présence en fonction des besoins et attentes exprimés ; il coopère avec les apprenants d'années supérieures et adapte sa communication aux différentes situations authentiques rencontrées."}, {"blocs": [4], "txt": "En situation clinique authentique, l'apprenant gère ses réactions émotionnelles avec suffisamment de recul pour maintenir une posture thérapeutique adaptée et mobilise son ressenti comme ressource dans la relation de soin, y compris face à des situations nouvelles ou complexes."}, {"blocs": [5], "txt": "Via le travail continu de son portfolio, les évaluations formatives, les entretiens réflexifs de bilan de fin de semestre, les retours de ses évaluations de pratique par les formateurs et ses auto-évaluations, l'apprenant identifie ses lacunes, ajuste son raisonnement clinique en conséquence et interroge sa posture professionnelle en construction"}], "A4": [{"blocs": [1], "txt": "En formation pratique clinique, l'apprenant conduit la consultation avec cohérence et fluidité, en intégrant l'ensemble des étapes du soin dans une dynamique globale et en mobilisant les protocoles avec discernement au service de chaque situation rencontrée."}, {"blocs": [2], "txt": "Dès le début de la consultation et au travers des échanges avec les formateurs et ses pairs, en s'appuyant sur les travaux des unités d'intégration, l'apprenant formule des hypothèses cliniques à partir des informations recueillies, les confronte à son raisonnement et ajuste sa pratique en temps réel en s'appuyant sur des schèmes de pensée consolidés."}, {"blocs": [2], "txt": "En situation authentique clinique, l'apprenant articule ses connaissances en sémiologie, physiopathologie et méthodologie clinique dans une démarche diagnostique intégrée, en recrutant de manière délibérée le raisonnement clinique et ses dimensions perceptives et émotionnelles, au service de la décision thérapeutique."}, {"blocs": [2, 4], "txt": "En situation clinique authentique, l'apprenant connecte sa perception palpatoire à son raisonnement clinique, apprécie les variables tissulaires perçues et ajuste ses gestes en temps réel en faisant du toucher un vecteur au sein du processus de décision clinique et d'adaptation au sein de la relation de soin."}, {"blocs": [3], "txt": "En formation pratique clinique et dans les activités collaboratives des U.E d'intégration, l'apprenant écoute et accueille le patient avec justesse, adapte son discours à ses besoins et attentes, et intègre ses pairs de troisième année dans une dynamique de soin partagée, développant ainsi une posture de praticien communicant et coopératif."}, {"blocs": [4], "txt": "En situation clinique authentique, l'apprenant mobilise ses émotions comme ressources au service de la relation thérapeutique, ajuste sa posture en fonction de ce qu'il vit et gère les situations complexes avec davantage de recul et de discernement. Ses réactions émotionnelles sont pleinement intégrées à sa pratique, ne constituent plus de frein mais deviennent des ressources."}, {"blocs": [5], "txt": "Dès le début de la consultation et au travers des échanges avec les formateurs et ses pairs, en s'appuyant sur les travaux des unités d'intégration, l'apprenant formule des hypothèses cliniques à partir des informations recueillies, les confronte à son raisonnement et ajuste sa pratique en temps réel en s'appuyant sur des schèmes de pensées consolidés."}, {"blocs": [5], "txt": "Dans les sessions de cours, à partir des cas cliniques étudiés et des mises en situation, l'apprenant formule des hypothèses thérapeutiques, anticipe les réactions du patient en situation authentique et construit une représentation affirmée de sa future pratique professionnelle, en se situant dans les composantes de l'identité ostéopathique."}, {"blocs": [5], "txt": "Via le travail continu de son portfolio, les évaluations formatives, les entretiens réflexifs de bilan de fin de semestre, les retours de ses évaluations de pratique par les formateurs et ses auto-évaluations, l'apprenant ajuste ses représentations, affine son raisonnement à partir des critiques reçues qu'il accepte, et s'engage dans une réflexion active sur son identité de praticien et celle de la profession d'ostéopathe."}], "A5": [{"blocs": [1], "txt": "En formation pratique clinique, l'apprenant conduit la consultation de manière autonome en consolidant sa technicité gestuelle et protocolaire, et démontre sa connaissance des démarches réglementaires, éthiques et déontologiques nécessaires à l'ouverture d'une activité professionnelle."}, {"blocs": [1, 5], "txt": "Par l'élaboration de son projet professionnel d'installation, l'apprenant intègre l'ensemble des dimensions de l'exercice ostéopathique, cliniques, relationnelles, réglementaires, éthiques et organisationnelles ; il se projette dans une pratique professionnelle cohérente avec la posture et les valeurs qu'il s'est construites au fil de sa formation."}, {"blocs": [2, 5], "txt": "Dans les situations authentiques cliniques rencontrées et les travaux en autonomie, l'apprenant prend des décisions cliniques argumentées, élabore les schèmes de pensée nécessaires à leur explication et les confronte de manière critique à sa propre réflexion."}, {"blocs": [2, 4], "txt": "Dans l'ensemble des activités en formation pratique clinique et pédagogiques, l'apprenant exerce un raisonnement clinique mobilisant de manière naturelle ses ressources incarnées, telles que la perception, les émotions, l'intuition, son vécu, comme composantes constitutives de sa pensée clinique."}, {"blocs": [2, 4], "txt": "En situation clinique authentique, l'apprenant intègre sa propre perception et celle du patient dans une pratique sensorielle incarnée, faisant du toucher et de l'ensemble de ses sens des outils cliniques à part entière, nourris par l'expérience accumulée tout au long de sa formation."}, {"blocs": [3], "txt": "Dans les situations authentiques cliniques et les travaux collaboratifs, l'apprenant mobilise une communication adaptée à chaque situation en respectant le consentement, les besoins, les valeurs et les attentes du patient ; il coopère avec ses pairs dans une dynamique préparatoire aux pratiques interprofessionnelles qu'il rencontrera dans son exercice."}, {"blocs": [4, 5], "txt": "Dans l'ensemble des situations authentiques cliniques et relationnelles rencontrées, l'apprenant fait preuve d'une stabilité émotionnelle lui permettant de mobiliser son ressenti au service de sa pratique et des relations qu'il développe, en intégrant la réflexivité comme composante essentielle de son exercice professionnel."}, {"blocs": [5], "txt": "Via son portfolio, le mémoire de fin d'étude, la méthodologie d'analyse et la sensibilisation à l'analyse de la pratique professionnelle, l'apprenant exerce un esprit critique sur sa propre pratique comme sur la profession ostéopathique, prend conscience de sa responsabilité dans son évolution et ajuste de manière continue sa représentation de l'identité professionnelle qu'il incarne."}]};
+const BLOC_TITLES = {"1": "Conduire l'exercice de l'ostéopathie de manière éthique, sécurisée et conforme au cadre réglementaire, en l’inscrivant dans le système de santé et dans l’environnement du patient.", "2": "Concevoir le projet d’intervention ostéopathique à partir du raisonnement clinique structuré, fondé sur l'évaluation et le contexte du patient.", "3": "Communiquer de manière adaptée avec le patient et les acteurs du parcours de soin afin de soutenir une alliance thérapeutique et une prise en charge coordonnée", "4": "Ajuster les dimensions perceptives, émotionnelles et sensorielles dans la pratique ostéopathique afin d’adapter le toucher, la manualité et l’intervention au vécu du patient et du praticien", "5": "Exercer avec réflexivité pour faire évoluer sa pratique professionnel avec éthique, au regard des enjeux de santé et des connaissances actuelles."};
+
+(function(){
+  "use strict";
+  var PROMO_META = {
+    A1:{ titre:"L'Éveil", meta:"La graine", strong:"#4E8C6A", tint:"#E7F0EA" },
+    A2:{ titre:"L'Apprentissage", meta:"La germination", strong:"#3C8497", tint:"#E4EFF1" },
+    A3:{ titre:"L'Intégration clinique", meta:"Le bourgeonnement", strong:"#A87E22", tint:"#F4ECD8" },
+    A4:{ titre:"L'Autonomie", meta:"l'épanouissement", strong:"#B05F33", tint:"#F3E5DC" },
+    A5:{ titre:"La Professionnalité", meta:"La fleur face au vent", strong:"#6A4063", tint:"#EEE6EC" }
+  };
+  var ORDER = ["A1","A2","A3","A4","A5"];
+  var LEVELS = ["Découverte","Réalisation accompagnée","Réalisation autonome","Maîtrise & transfert"];
+  var LEVEL_DESC = [
+    "Je découvre ; j'ai besoin d'être guidé pas à pas.",
+    "Je le fais avec de l'aide ou sous supervision.",
+    "Je le fais seul, de façon fiable, en situation habituelle.",
+    "Je l'adapte à des situations nouvelles ; je peux l'expliquer ou le transmettre."
+  ];
+  var BLOC_SHORT = {1:"Cadre, éthique & sécurité",2:"Raisonnement clinique",3:"Communication & alliance",4:"Perception & toucher",5:"Réflexivité & évolution"};
+  var BLOC_COLOR = {1:"#3F7A5A",2:"#2F6F86",3:"#B07A28",4:"#9C4F2E",5:"#6A4063"};
+
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var state = { promo:null, positions:{}, entries:[] };
+
+  function today(){ var d=new Date(); return d.toISOString().slice(0,10); }
+  function fmtDate(iso){ var p=(iso||"").split("-"); return p.length===3 ? (p[2]+"/"+p[1]) : iso; }
+  function key(promo, idx){ return promo+"#"+idx; }
+
+  document.getElementById("date").value = today();
+
+  function setHue(p){
+    document.documentElement.style.setProperty("--strong", p.strong);
+    document.documentElement.style.setProperty("--tint", p.tint);
+  }
+
+  // scale key
+  var scaleKey = document.getElementById("scaleKey");
+  LEVELS.forEach(function(name,i){
+    var c=document.createElement("div"); c.className="keycard";
+    c.innerHTML='<div class="kl">Niveau '+(i+1)+'</div><div class="kn">'+name+'</div><div class="kd">'+LEVEL_DESC[i]+'</div>';
+    scaleKey.appendChild(c);
+  });
+
+  // promo chips
+  var promoChips=document.getElementById("promoChips");
+  ORDER.forEach(function(code){
+    var p=PROMO_META[code];
+    var b=document.createElement("button"); b.className="chip"; b.type="button";
+    b.innerHTML='<span class="c-code">'+code+'</span><span class="c-name">'+p.titre+'</span><span class="c-meta">'+p.meta+'</span>';
+    b.addEventListener("click",function(){
+      state.promo=code; state.positions={};
+      Array.prototype.forEach.call(promoChips.children,function(c){c.classList.remove("on");});
+      b.classList.add("on"); setHue(p);
+      renderAcq(); renderEntries(); renderChart();
+    });
+    promoChips.appendChild(b);
+  });
+
+  // positioning, grouped by bloc
+  var acqBox=document.getElementById("acqBox");
+  function renderAcq(){
+    if(!state.promo){return;}
+    var list=ACQUIS[state.promo]||[];
+    acqBox.innerHTML="";
+    // group by primary bloc (first tag), but show all tags
+    var groups={};
+    list.forEach(function(a,idx){
+      var b=a.blocs[0];
+      (groups[b]=groups[b]||[]).push({a:a,idx:idx});
+    });
+    Object.keys(groups).sort().forEach(function(bn){
+      var g=document.createElement("div"); g.className="bloc-group";
+      g.style.setProperty("--bcol", BLOC_COLOR[bn]||"#4E8C6A");
+      var head=document.createElement("div"); head.className="bloc-head";
+      head.innerHTML='<span class="bn">BLOC '+bn+'</span><span class="bt">'+(BLOC_SHORT[bn]||"")+'</span>';
+      g.appendChild(head);
+      groups[bn].forEach(function(item){
+        var a=item.a, idx=item.idx;
+        var row=document.createElement("div"); row.className="acq";
+        var tags = a.blocs.length>1 ? '<div class="acq-tags">Acquis transversal · blocs '+a.blocs.join(" · ")+'</div>' : '';
+        row.innerHTML='<p class="acq-txt">'+a.txt+'</p>'+tags;
+        var scale=document.createElement("div"); scale.className="scale"; scale.setAttribute("role","group");
+        var lab=document.createElement("div"); lab.className="seg-label"; lab.innerHTML="À positionner";
+        for(var lv=1;lv<=4;lv++){(function(lv){
+          var seg=document.createElement("button"); seg.className="seg"; seg.type="button"; seg.textContent=lv;
+          seg.setAttribute("aria-label","Niveau "+lv+" — "+LEVELS[lv-1]);
+          seg.addEventListener("click",function(){
+            state.positions[key(state.promo,idx)]=lv;
+            Array.prototype.forEach.call(scale.children,function(s,si){ s.classList.toggle("on",(si+1)<=lv); });
+            lab.innerHTML='Niveau '+lv+' · <span class="lv">'+LEVELS[lv-1]+'</span>';
+          });
+          scale.appendChild(seg);
+        })(lv);}
+        row.appendChild(scale); row.appendChild(lab);
+        g.appendChild(row);
+      });
+      acqBox.appendChild(g);
+    });
+    var note=document.createElement("div"); note.className="muted-note";
+    note.innerHTML="<b>"+list.length+" acquis</b> pour cette année. Tu n'es pas obligé·e de tous les positionner à chaque relevé — concentre-toi sur ceux qui ont bougé.";
+    acqBox.appendChild(note);
+  }
+
+  // entries list
+  var entriesBox=document.getElementById("entriesBox");
+  function promoEntries(){
+    return state.entries.filter(function(e){return e.promo===state.promo;})
+      .sort(function(a,b){return a.date<b.date?-1:1;});
+  }
+  function renderEntries(){
+    if(!state.promo){entriesBox.innerHTML="";return;}
+    var es=promoEntries(); entriesBox.innerHTML="";
+    if(!es.length){ return; }
+    var box=document.createElement("div"); box.className="entries";
+    es.forEach(function(e){
+      var n=Object.keys(e.positions||{}).length;
+      var row=document.createElement("div"); row.className="entry";
+      row.innerHTML='<span class="ed">'+fmtDate(e.date)+'</span><span class="ec">'+n+' acquis positionnés</span>';
+      var del=document.createElement("button"); del.type="button"; del.textContent="retirer";
+      del.addEventListener("click",function(){
+        state.entries=state.entries.filter(function(x){return x!==e;});
+        renderEntries(); renderChart();
+      });
+      row.appendChild(del); box.appendChild(row);
+    });
+    entriesBox.appendChild(box);
+  }
+
+  // chart: avg mastery per bloc across promo entries
+  var chartBox=document.getElementById("chartBox");
+  function blocAvg(positions, blocNum){
+    var list=ACQUIS[state.promo]||[]; var sum=0,c=0;
+    list.forEach(function(a,idx){
+      if(a.blocs.indexOf(blocNum)>=0){
+        var v=positions[key(state.promo,idx)];
+        if(v){ sum+=v; c++; }
+      }
+    });
+    return c? sum/c : null;
+  }
+  function blocsPresent(){
+    var set={}; (ACQUIS[state.promo]||[]).forEach(function(a){ a.blocs.forEach(function(b){set[b]=1;}); });
+    return Object.keys(set).map(Number).sort(function(a,b){return a-b;});
+  }
+  function renderChart(){
+    if(!state.promo){return;}
+    var es=promoEntries();
+    if(es.length<2){
+      chartBox.innerHTML='<p class="gate">Ajoute au moins deux relevés à des dates différentes pour voir ta courbe d\u2019\u00e9volution.</p>';
+      return;
+    }
+    var W=680,H=320,padL=46,padR=16,padT=18,padB=42;
+    var n=es.length;
+    function X(i){ return padL + (n===1?0:i*(W-padL-padR)/(n-1)); }
+    function Y(v){ return padT + (4-v)/3*(H-padT-padB); }
+    var svg='<svg class="chart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Courbe d\u2019\u00e9volution de la ma\u00eetrise par bloc">';
+    // y gridlines + labels (levels 1..4)
+    for(var lv=1; lv<=4; lv++){
+      var y=Y(lv);
+      svg+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#E2E3DC" stroke-width="1"/>';
+      svg+='<text x="'+(padL-8)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="#9A988E">'+lv+'</text>';
+    }
+    // x labels (dates)
+    es.forEach(function(e,i){
+      svg+='<text x="'+X(i)+'" y="'+(H-padB+20)+'" text-anchor="middle" font-size="10.5" fill="#6F6D64">'+fmtDate(e.date)+'</text>';
+    });
+    // lines per bloc
+    blocsPresent().forEach(function(b){
+      var pts=[];
+      es.forEach(function(e,i){
+        var v=blocAvg(e.positions,b);
+        if(v!=null) pts.push({x:X(i),y:Y(v)});
+      });
+      if(pts.length>=1){
+        var col=BLOC_COLOR[b]||"#4E8C6A";
+        if(pts.length>=2){
+          var dpath=pts.map(function(p,k){return (k?"L":"M")+p.x.toFixed(1)+" "+p.y.toFixed(1);}).join(" ");
+          svg+='<path d="'+dpath+'" fill="none" stroke="'+col+'" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
+        }
+        pts.forEach(function(p){ svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="3.4" fill="'+col+'"/>'; });
+      }
+    });
+    svg+='</svg>';
+    var legend='<div class="legend">';
+    blocsPresent().forEach(function(b){
+      legend+='<span><i style="background:'+(BLOC_COLOR[b]||"#4E8C6A")+'"></i>Bloc '+b+' — '+(BLOC_SHORT[b]||"")+'</span>';
+    });
+    legend+='</div>';
+    chartBox.innerHTML=svg+legend;
+  }
+
+  // add current relevé
+  document.getElementById("addBtn").addEventListener("click",function(){
+    if(!state.promo){ alert("Choisis d'abord ta promotion."); return; }
+    var nb=Object.keys(state.positions).length;
+    if(!nb){ alert("Positionne-toi sur au moins un acquis avant d'ajouter le relevé."); return; }
+    var date=document.getElementById("date").value || today();
+    state.entries=state.entries.filter(function(e){ return !(e.promo===state.promo && e.date===date); });
+    state.entries.push({ date:date, promo:state.promo, positions:Object.assign({},state.positions) });
+    renderEntries(); renderChart();
+  });
+
+  // export
+  document.getElementById("exportBtn").addEventListener("click",function(){
+    var data={ student:document.getElementById("student").value||"", entries:state.entries, version:1 };
+    var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+    var who=(data.student||"etudiant").replace(/[^\w\-]+/g,"_");
+    a.download="suivi-maitrise-"+who+".json"; document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },300);
+  });
+
+  // import
+  document.getElementById("importBtn").addEventListener("click",function(){ document.getElementById("fileInput").click(); });
+  document.getElementById("fileInput").addEventListener("change",function(ev){
+    var f=ev.target.files[0]; if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){
+      try{
+        var data=JSON.parse(r.result);
+        if(data.student) document.getElementById("student").value=data.student;
+        state.entries=Array.isArray(data.entries)?data.entries:[];
+        renderEntries(); renderChart();
+        alert("Suivi importé : "+state.entries.length+" relevé(s).");
+      }catch(e){ alert("Fichier illisible. Choisis un fichier de suivi exporté par cet outil."); }
+    };
+    r.readAsText(f); ev.target.value="";
+  });
+
+  // print view
+  function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  window.addEventListener("beforeprint",function(){
+    var pv=document.getElementById("printView");
+    var p=state.promo?PROMO_META[state.promo]:null;
+    var who=document.getElementById("student").value||"";
+    var date=document.getElementById("date").value||today();
+    var col=p?p.strong:"#4E8C6A", tint=p?p.tint:"#E7F0EA";
+    var h='<div class="pv-band" style="border-left-color:'+col+';background:'+tint+'">'+
+          '<h1>Relevé de maîtrise — acquis d\u2019apprentissage</h1>'+
+          '<div class="pv-meta">'+(who?esc(who)+" · ":"")+(p?(state.promo+" "+p.titre+" — "+p.meta):"")+' · '+fmtDate(date)+'</div></div>';
+    if(p){
+      var list=ACQUIS[state.promo]||[]; var groups={};
+      list.forEach(function(a,idx){ var b=a.blocs[0]; (groups[b]=groups[b]||[]).push({a:a,idx:idx}); });
+      Object.keys(groups).sort().forEach(function(bn){
+        h+='<div class="pv-bloc" style="background:'+(BLOC_COLOR[bn]||"#4E8C6A")+'">BLOC '+bn+' — '+(BLOC_SHORT[bn]||"")+'</div>';
+        groups[bn].forEach(function(it){
+          var v=state.positions[key(state.promo,it.idx)];
+          var pct=v?(v/4*100):0;
+          h+='<div class="pv-acq">'+esc(it.a.txt)+
+             '<div class="pv-lvl">'+(v?("Niveau "+v+" · "+LEVELS[v-1]):"non positionné")+'</div>'+
+             '<div class="pv-bar"><div class="pv-fill" style="width:'+pct+'%;background:'+(BLOC_COLOR[bn]||"#4E8C6A")+'"></div></div></div>';
+        });
+      });
+    }
+    h+='<div class="pv-foot">Auto-positionnement — miroir de progression, sans valeur de note. Portfolio CIDO.</div>';
+    pv.innerHTML=h;
+  });
+  document.getElementById("printBtn").addEventListener("click",function(){ window.print(); });
+
+  // reset
+  document.getElementById("resetBtn").addEventListener("click",function(){
+    state.positions={};
+    if(state.promo) renderAcq();
+  });
+
+})();
+</script>
+</body>
+</html>
